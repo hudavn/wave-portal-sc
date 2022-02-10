@@ -1,23 +1,48 @@
+const { Contract } = require("ethers");
+
 const main = async() => {
-    const [owner, randomPerson] = await hre.ethers.getSigners();
-    const WavePortalFactory = await hre.ethers.getContractFactory("WavePortal");
-    const WaveContract = await WavePortalFactory.deploy();
-    await WaveContract.deployed();
+    const waveContractFactory = await hre.ethers.getContractFactory("WavePortal");
+    const waveContract = await waveContractFactory.deploy({
+        value: hre.ethers.utils.parseEther("0.1"),
+    });
+    await waveContract.deployed();
+    console.log("Contract deployed at: ", waveContract.address);
 
-    console.log("Contract deployed to: ", WaveContract.address);
-    console.log("Contract deployed by: ", owner.address);
+    /*
+    Get contract balance
+    */
+    let contractBalance = await hre.ethers.provider.getBalance(
+        waveContract.address
+    );
+    console.log(
+        "Contract Balance: ",
+        hre.ethers.utils.formatEther(contractBalance),
+    );
 
-    let waveCount = await WaveContract.getTotalWaves();
-    console.log(waveCount.toNumber());
+    /*
+    Send wave
+    */
+    const people = await hre.ethers.getSigners();
+    for (let index = 1; index < people.length; index+=1) {
+        let person = people[index];
+        let waveTxn = await waveContract.connect(person).wave("A message!");
+        await waveTxn.wait();
+    }
 
-    let waveTxn = await WaveContract.wave("A message!");
-    await waveTxn.wait();
-
-    waveTxn = await WaveContract.connect(randomPerson).wave("Another message!");
-    await waveTxn.wait();
-
-    let allWaves = await WaveContract.getAllWaves();
-
+    /* 
+    Get contract balance to see updates
+    */
+    contractBalance = await hre.ethers.provider.getBalance(
+        waveContract.address
+    );
+    console.log(
+        "Contract Balance: ",
+        hre.ethers.utils.formatEther(contractBalance),
+    );
+    
+    let allWavesCount = await waveContract.getAllWavesCount();
+    console.log("Total waves: ", allWavesCount.toNumber());
+    let allWaves = await waveContract.getAllWaves();
     console.log(allWaves);
 };
 
