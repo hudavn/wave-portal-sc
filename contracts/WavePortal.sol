@@ -20,7 +20,7 @@ contract WavePortal {
 
     constructor() payable {
         console.log("Yo yo, I am a contract and I am smart");
-        prizeAmount = 0.0001 ether;
+        prizeAmount = 0.01 ether;
     }
 
     function wave(string memory _message) public {
