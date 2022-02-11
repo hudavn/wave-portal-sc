@@ -1,4 +1,4 @@
-# Wave Portal 
+# Wave Portal 👋
 ### Components
 - [Website](https://waveportal-starter-project.hudavn.repl.co/) for clients interaction.
 - Smart Contract with balance 0.01 ETH for handle transactions, randomly airdrop 0.001 ETH for lucky users. (**Rinkeby Testnet only**)
