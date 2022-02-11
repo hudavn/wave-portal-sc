@@ -10,6 +10,7 @@ contract WavePortal {
     uint256 seed;
     
     event NewWave(address indexed from, uint256 timestamp, string message);
+    event Win(bool check);
 
     struct Wave {
         address waver;
@@ -29,8 +30,8 @@ contract WavePortal {
 
     function wave(string memory _message) public {
         require(
-            lastWaved[msg.sender] + 15 minutes < block.timestamp,
-            "You have waited recently, please wait at least 15 minutes after last waved"
+            lastWaved[msg.sender] + 15 seconds < block.timestamp,
+            "You have waved recently, please wait at least 15 seconds after last waved"
         );
         lastWaved[msg.sender] = block.timestamp;
 
@@ -49,6 +50,8 @@ contract WavePortal {
             (bool success, ) = (msg.sender).call{value: prizeAmount}("");
             require(success, "Failed to withdraw money from contract.");
         }
+
+        emit Win(seed<=50);
     }
 
     function getAllWavesCount() public view returns (uint256) {
