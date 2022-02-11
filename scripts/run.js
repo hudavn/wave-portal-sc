@@ -23,10 +23,12 @@ const main = async() => {
     Send wave
     */
     const people = await hre.ethers.getSigners();
-    for (let index = 1; index < people.length; index+=1) {
-        let person = people[1];
-        let waveTxn = await waveContract.connect(person).wave("A message!");
-        await waveTxn.wait();
+    for (let index = 1;  index < people.length - 1 ; index+=1) {
+        let person = people[index];
+        let waveTxn = await waveContract.connect(person).wave("A message!", {gasLimit: 300000});
+        let receipt = await waveTxn.wait();
+        
+        console.log("Win prize: ",receipt.events?.filter((x) => {return x.event == "Win"})[0].args.check);
 
         /* 
         Get contract balance to see updates
